@@ -68,7 +68,6 @@
 			"name": "resolveData",
 			"inputs": [
 				{"name":"addrRoot","type":"address"},
-				{"name":"id","type":"uint256"},
 				{"name":"name","type":"bytes"}
 			],
 			"outputs": [

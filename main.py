@@ -13,7 +13,7 @@ def Authority():
             signs = []
             count = input("Write here count of signers: ")
             for i in range(int(count)):
-                signs.append(input(f"Write pubkey #{i}: "))
+                signs.append(str(int(input(f"Write pubkey #{i}: "),16)))
             a = f.create_root(signs)
             print(a)
         elif ans == "2":
@@ -24,7 +24,8 @@ def Authority():
         elif ans == "3":
             adr = input("Write address of user: ")
             metadata = input("Write data of user: ")
-            print(f.add_user_data(adr, metadata))
+            secret = input("Write your secret: ")
+            print(f.adduserdata(adr, metadata,secret).decoded.output)
         elif ans == "4":
             break
 
@@ -32,7 +33,7 @@ def User():
     while True:
         print(f"{5 * '='}Choose your request{5 * '='}")
         print("1) Get info")
-        # print("2) Create new user")
+        print("2) Get address of user by data")
         # print("3) Add new info to user")
         print("4) Go back")
         ans = input("Write number of your request: ")
@@ -44,17 +45,13 @@ def User():
             adr = input("Write address of root: ")
             metadata = input("Write data of user: ")
             metadata = hashlib.sha256(metadata.encode('utf-8')).hexdigest()
-            f.create_user(adr, metadata)
-        elif ans == "3":
-            adr = input("Write address of user: ")
-            metadata = input("Write data of user: ")
-            print(f.add_user_data(adr, metadata))
+            print(f.get_data(adr, metadata))
         elif ans == "4":
             break
 
 def GenKeys():
-    pass
-
+    a = f.gen_keys()
+    print(f"Secret: {a.secret}\nPublic: {a.public}")
 
 if __name__ == "__main__":
     while True:

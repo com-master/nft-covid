@@ -62,8 +62,7 @@
 		}
 	],
 	"data": [
-		{"key":1,"name":"_id","type":"uint256"},
-		{"key":2,"name":"_name","type":"bytes"}
+		{"key":1,"name":"_name","type":"bytes"}
 	],
 	"events": [
 	],
@@ -76,7 +75,6 @@
 		{"name":"_addrAuthor","type":"address"},
 		{"name":"_authority_signs","type":"map(uint256,uint8)"},
 		{"components":[{"name":"amsg","type":"string"},{"name":"pubkey","type":"uint256"}],"name":"_messages","type":"tuple[]"},
-		{"name":"_id","type":"uint256"},
 		{"name":"_name","type":"bytes"}
 	]
 }

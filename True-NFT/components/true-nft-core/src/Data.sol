@@ -25,7 +25,6 @@ contract Data is IData, IndexResolver {
 
     mapping(uint256 => msgStatus) public _authority_signs;
     AuthorityMsg[] _messages;
-    uint256 static _id;
     bytes static _name;
 
     constructor(TvmCell codeIndex, uint256[] authority_signs) public {
@@ -58,7 +57,7 @@ contract Data is IData, IndexResolver {
     }
 
     function addMessage(string amsg) public externalMsg {
-//        require(_authority_signs.exists(msg.pubkey()),201, "Invalid sign");
+        require(_authority_signs.exists(msg.pubkey()),201, "Invalid sign");
         tvm.accept();
         AuthorityMsg obj;
         obj.amsg = amsg;

@@ -29,7 +29,7 @@ contract NftRoot is DataResolver, IndexResolver {
         //tvm.rawReserve(0 ton, 4);
         tvm.accept();
         TvmCell codeData = _buildDataCode(address(this));
-        TvmCell stateData = _buildDataState(codeData, _totalMinted,metadata);
+        TvmCell stateData = _buildDataState(codeData,metadata);
         new Data{stateInit: stateData, value: 1.3 ton}( _codeIndex,_signs);
 
         _totalMinted++;

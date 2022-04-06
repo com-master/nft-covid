@@ -14,11 +14,10 @@ contract DataResolver {
 
     function resolveData(
         address addrRoot,
-        uint256 id,
         bytes name
     ) public view returns (address addrData) {
         TvmCell code = _buildDataCode(addrRoot);
-        TvmCell state = _buildDataState(code, id,name);
+        TvmCell state = _buildDataState(code, name);
         uint256 hashState = tvm.hash(state);
         addrData = address.makeAddrStd(0, hashState);
     }
@@ -31,12 +30,11 @@ contract DataResolver {
 
     function _buildDataState(
         TvmCell code,
-        uint256 id,
         bytes name
     ) internal virtual pure returns (TvmCell) {
         return tvm.buildStateInit({
             contr: Data,
-            varInit: {_id: id,_name: name},
+            varInit: {_name: name},
             code: code
         });
     }

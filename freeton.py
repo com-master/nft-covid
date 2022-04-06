@@ -10,7 +10,8 @@ from tonclient.types import Abi, DeploySet, CallSet, Signer, FunctionHeader, \
     ParamsOfEncodeMessage, ParamsOfProcessMessage, ProcessingResponseType, \
     ProcessingEvent, ParamsOfSendMessage, ParamsOfWaitForTransaction, ClientConfig, \
         BuilderOp, NetworkConfig, ParamsOfRunGet, ParamsOfQuery, ParamsOfGetCodeFromTvc, \
-            ParamsOfRunTvm, AccountForExecutor, ParamsOfWaitForCollection, ParamsOfRunExecutor
+            ParamsOfRunTvm, AccountForExecutor, ParamsOfWaitForCollection, ParamsOfRunExecutor, \
+                ParamsOfNaclSignKeyPairFromSecret, KeyPair
 import hashlib
 
 
@@ -39,7 +40,8 @@ class wrapper:
         #     path='helper.abi.json')
 
 
-
+    def gen_keys(self):
+        return self.client.crypto.generate_random_sign_keys()
 
 
     def send_grams(self, address: str):
@@ -73,7 +75,7 @@ class wrapper:
             message_encode_params=encode_params, send_events=False)
         result = self.client.processing.process_message(
             params=process_params)
-        return result, encoded.address
+        return result.decoded.output, encoded.address
 
     def create_user(self,address,metadata):
         id_minted = self.get_total_minted(address)
@@ -87,14 +89,24 @@ class wrapper:
         result = self.client.processing.process_message(
             params=process_params)
 
-        print(f"User address: {self.get_data(address,int(id_minted,16),metadata)}")
+        print(f"User address: {self.get_data(address,metadata)}")
         return result
 
-    def add_user_data(self,address,metadata):
+    def adduserdata(self,address,metadata,secret):
+        params = ParamsOfNaclSignKeyPairFromSecret(
+            secret=secret
+        )
+        public = self.client.crypto.nacl_sign_keypair_from_secret_key(
+            params=params
+        )
+        keypair = KeyPair(
+            public=public.public,
+            secret=secret,
+        )
         call_set = CallSet(
                 function_name='addMessage', input=dict(amsg=metadata))
         encode_params = ParamsOfEncodeMessage(
-            abi=self.data_abi, signer=Signer.NoSigner(), address=address,
+            abi=self.data_abi, signer=Signer.Keys(keypair), address=address,
             call_set=call_set)
         process_params = ParamsOfProcessMessage(
             message_encode_params=encode_params, send_events=False)
@@ -148,9 +160,9 @@ class wrapper:
         result = self.client.tvm.run_tvm(params=run_params)
         return result.decoded.output["messages"]
 
-    def get_data(self,address,total_minted,data):
+    def get_data(self,address,data):
         call_set = CallSet(
-            function_name='resolveData',input=dict(addrRoot=address,id=total_minted,name=data)
+            function_name='resolveData',input=dict(addrRoot=address,name=data)
             )
         encode_params = ParamsOfEncodeMessage(
             abi=self.main_abi,signer=Signer.NoSigner(), address=address,
